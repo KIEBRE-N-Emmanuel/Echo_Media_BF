@@ -1,0 +1,95 @@
+version: "3.8"
+
+# EchoMedia BF — environnement Airflow local (Mois 1)
+# Lancement : docker compose up airflow-init && docker compose up
+
+x-airflow-common: &airflow-common
+  image: apache/airflow:2.9.3-python3.11
+  environment: &airflow-common-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow/airflow
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DEFAULT_TIMEZONE: "Africa/Ouagadougou"
+    AIRFLOW__SCHEDULER__CATCHUP_BY_DEFAULT: "false"
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "false"
+    # Connexion vers la base métier (contenu collecté/scoré), distincte de la base Airflow
+    AIRFLOW_CONN_ECHOMEDIA_DB: postgresql://echomedia:echomedia@postgres_echomedia:5432/echomedia
+    # Clés d'API — jamais en dur dans le code, injectées via variables d'environnement / secrets manager
+    NEWSAPI_KEY: ${NEWSAPI_KEY:-}
+    GNEWS_KEY: ${GNEWS_KEY:-}
+    LLM_API_KEY: ${LLM_API_KEY:-}
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- }
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./config:/opt/airflow/config
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./requirements.txt:/requirements.txt
+  user: "${AIRFLOW_UID:-50000}:0"
+  depends_on:
+    postgres_airflow:
+      condition: service_healthy
+
+services:
+  postgres_airflow:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres-airflow-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  # Base métier : contenus bruts, nettoyés, scorés, et données servies au dashboard
+  postgres_echomedia:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: echomedia
+      POSTGRES_PASSWORD: echomedia
+      POSTGRES_DB: echomedia
+    volumes:
+      - postgres-echomedia-data:/var/lib/postgresql/data
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "echomedia"]
+      interval: 5s
+      retries: 5
+
+  airflow-init:
+    <<: *airflow-common
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        pip install --no-cache-dir -r /requirements.txt
+        airflow db migrate
+        airflow users create --username admin --password admin \
+          --firstname Echo --lastname Media --role Admin --email admin@echomedia.local
+        airflow connections add echomedia_db --conn-type postgres \
+          --conn-host postgres_echomedia --conn-schema echomedia \
+          --conn-login echomedia --conn-password echomedia --conn-port 5432
+    depends_on:
+      postgres_airflow:
+        condition: service_healthy
+      postgres_echomedia:
+        condition: service_healthy
+
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+
+  airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+
+volumes:
+  postgres-airflow-data:
+  postgres-echomedia-data:

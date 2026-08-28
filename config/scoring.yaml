@@ -1,0 +1,48 @@
+# Référence : §2.4 (thèmes) et §11.1 (échelle de scoring) du cahier des charges.
+# Les seuils sont indicatifs, à valider/ajuster en semaine 3 sur le corpus annoté.
+
+themes:
+  - securite_lutte_antiterroriste
+  - politique_gouvernance
+  - diplomatie_relations_internationales
+  - economie_developpement
+  - humanitaire_droits_humains
+  - societe_culture
+  - sante_environnement
+
+content_types:
+  - article_presse
+  - depeche_agence
+  - editorial_tribune
+  - interview
+
+tons:
+  - factuel
+  - critique
+  - alarmiste
+  - laudatif
+  - analytique
+
+opinion_scale:
+  favorable:
+    seuil_min: 0.3
+    seuil_max: 1.0
+  neutre:
+    seuil_min: -0.3
+    seuil_max: 0.3
+  defavorable:
+    seuil_min: -1.0
+    seuil_max: -0.3
+
+# Mots-clés de filtrage de pertinence (EF-03) — un contenu est retenu s'il mentionne
+# explicitement le pays, sa capitale, ses dirigeants ou entités clés (§2.5).
+relevance_keywords:
+  fr:
+    - "Burkina Faso"
+    - "Ouagadougou"
+    - "burkinabè"
+    - "burkinabé"
+  en:
+    - "Burkina Faso"
+    - "Ouagadougou"
+    - "Burkinabe"

@@ -1,0 +1,194 @@
+# Liste de travail pour la validation en semaine 1 (§2.3) — combine médias
+# NATIONAUX (Burkina Faso) et INTERNATIONAUX, comme l'exige le titre même du
+# projet ("médias nationaux et internationaux"). La première version de ce
+# fichier ne comportait que des sources internationales : oubli corrigé.
+#
+# Statut "verifie: true" = flux RSS confirmé pendant le cadrage (URL testée).
+# Statut "verifie: false" = à confirmer en S1, l'URL peut avoir changé.
+#
+# type: rss | api_gdelt | api_newsapi | scraping
+# langue: fr | en
+
+sources:
+
+  # ============ MÉDIAS NATIONAUX (Burkina Faso) ============
+
+  - id: sidwaya
+    nom: "Sidwaya"
+    type: rss
+    langue: fr
+    url: "https://www.sidwaya.info/feed"
+    verifie: true
+    note: "Quotidien national, ancien journal d'État, considéré journal de référence."
+    actif: true
+
+  - id: burkina24
+    nom: "Burkina24"
+    type: rss
+    langue: fr
+    url: "https://burkina24.com/feed"
+    verifie: true
+    note: "Site d'info indépendant, forte audience (>2M abonnés Facebook)."
+    actif: true
+
+  - id: aib
+    nom: "Agence d'Information du Burkina (AIB)"
+    type: rss
+    langue: fr
+    url: "https://www.aib.media/feed"
+    verifie: true
+    note: "Agence de presse officielle du Burkina Faso."
+    actif: true
+
+  - id: lefaso_net
+    nom: "LeFaso.net"
+    type: rss
+    langue: fr
+    url: "https://lefaso.net/spip.php?page=backend"
+    verifie: true
+    note: "Média en ligne burkinabè le plus consulté."
+    actif: true
+
+  - id: wakat_sera
+    nom: "Wakat Séra"
+    type: scraping
+    langue: fr
+    url: "https://www.wakatsera.com/"
+    verifie: false
+    note: "Pas de flux RSS confirmé — scraping en attendant vérification S1."
+    actif: true
+
+  - id: le_pays_bf
+    nom: "Le Pays"
+    type: scraping
+    langue: fr
+    url: "https://lepays.bf/"
+    verifie: false
+    note: "Quotidien indépendant généraliste. URL flux RSS à confirmer en S1."
+    actif: true
+
+  # ============ AGENCES INTERNATIONALES ============
+
+  - id: afp
+    nom: "AFP"
+    type: rss
+    langue: fr
+    url: "https://www.afp.com/fr/rss.xml"
+    verifie: false
+    actif: true
+
+  - id: reuters_africa
+    nom: "Reuters Africa"
+    type: scraping
+    langue: en
+    url: "https://www.reuters.com/world/africa/"
+    verifie: false
+    note: "Pas de RSS public — scraping, sensible aux changements de structure HTML."
+    actif: true
+
+  # ============ PRESSE PANAFRICAINE / FRANCOPHONE ============
+
+  - id: rfi
+    nom: "RFI"
+    type: rss
+    langue: fr
+    url: "https://www.rfi.fr/fr/afrique/rss"
+    verifie: false
+    actif: true
+
+  - id: jeune_afrique
+    nom: "Jeune Afrique"
+    type: rss
+    langue: fr
+    url: "https://www.jeuneafrique.com/feed/"
+    verifie: false
+    actif: true
+
+  - id: africanews
+    nom: "Africanews"
+    type: rss
+    langue: fr
+    url: "https://fr.africanews.com/feed/"
+    verifie: false
+    actif: true
+
+  - id: france24_fr
+    nom: "France 24"
+    type: rss
+    langue: fr
+    url: "https://www.france24.com/fr/afrique/rss"
+    verifie: false
+    actif: true
+
+  # ============ PRESSE OCCIDENTALE GÉNÉRALISTE ============
+
+  - id: bbc_afrique
+    nom: "BBC Afrique"
+    type: rss
+    langue: fr
+    url: "https://www.bbc.com/afrique/index.xml"
+    verifie: false
+    actif: true
+
+  - id: bbc_africa_en
+    nom: "BBC Africa"
+    type: rss
+    langue: en
+    url: "https://feeds.bbci.co.uk/news/world/africa/rss.xml"
+    verifie: false
+    actif: true
+
+  - id: guardian_africa
+    nom: "The Guardian - Africa"
+    type: rss
+    langue: en
+    url: "https://www.theguardian.com/world/africa/rss"
+    verifie: false
+    actif: true
+
+  - id: lemonde_afrique
+    nom: "Le Monde Afrique"
+    type: scraping
+    langue: fr
+    url: "https://www.lemonde.fr/afrique/"
+    verifie: false
+    note: "Contenu partiellement payant — vérifier ce qui est extractible."
+    actif: true
+
+  # ============ AGRÉGATEURS / BASES OUVERTES ============
+
+  - id: gdelt
+    nom: "GDELT (baseline de ton)"
+    type: api_gdelt
+    langue: "fr,en"
+    query: "Burkina Faso"
+    verifie: false
+    actif: true
+
+  - id: newsapi
+    nom: "NewsAPI (complément multi-sources)"
+    type: api_newsapi
+    langue: "fr,en"
+    query: "Burkina Faso"
+    verifie: false
+    actif: true
+
+# ---------------------------------------------------------------------------
+# Point de vigilance identifié pendant la recherche de sources (à discuter
+# avec BF Society en S1) :
+#
+# Reporters Sans Frontières signale que le paysage médiatique burkinabè
+# traverse une période de fortes tensions : plusieurs médias ont fait l'objet
+# de suspensions ou de pressions ces dernières années, et certains
+# journalistes critiques du pouvoir ont été poussés à l'exil. Concrètement,
+# ça veut dire deux choses pour le projet :
+#   1. La liste des sources nationales actives peut changer vite (un média
+#      suspendu aujourd'hui peut réapparaître, ou l'inverse) — le fichier
+#      doit être révisé régulièrement, pas figé une fois pour toutes.
+#   2. Le critère "diversité de posture éditoriale" (§2.3) est plus délicat
+#      à satisfaire côté national qu'attendu : les médias encore en activité
+#      penchent structurellement vers une ligne proche des autorités. À
+#      documenter explicitement dans la méthodologie de sélection (livrable
+#      §9), plutôt que de prétendre à un équilibre qui n'existe pas
+#      pleinement sur le terrain actuellement.
+# ---------------------------------------------------------------------------
